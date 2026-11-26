@@ -1,0 +1,222 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Shooting Target Game</title>
+    
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #222;
+            color: white;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 15px 0 10px;
+        }
+
+        #info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        #startBtn {
+            padding: 12px 25px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: white;
+        }
+
+        #game {
+            width: 90%;
+            max-width: 800px;
+            height: 500px;
+            margin: 20px auto;
+            background: #eee;
+            border: 5px solid white;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #target {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: red;
+            border: 10px solid white;
+            outline: 5px solid red;
+            position: absolute;
+            display: none;
+            cursor: crosshair;
+        }
+
+        #message {
+            font-size: 24px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>🎯 Shooting Target Game</h1>
+
+    <div id="info">
+        <div>Score: <span id="score">0</span></div>
+        <div>Time: <span id="time">30</span></div>
+        <div>Miss: <span id="miss">0</span></div>
+    </div>
+
+    <button id="startBtn">Start Game</button>
+
+    <div id="game">
+        <div id="target"></div>
+    </div>
+
+    <div id="message">
+        Start button dabao aur target ko shoot karo!
+    </div>
+
+
+    <script>
+
+        let score = 0;
+        let miss = 0;
+        let time = 30;
+        let gameRunning = false;
+        let timer;
+
+        const game = document.getElementById("game");
+        const target = document.getElementById("target");
+
+        const scoreText = document.getElementById("score");
+        const timeText = document.getElementById("time");
+        const missText = document.getElementById("miss");
+
+        const startBtn = document.getElementById("startBtn");
+        const message = document.getElementById("message");
+
+
+        // Random target position
+        function moveTarget() {
+
+            const gameWidth = game.clientWidth;
+            const gameHeight = game.clientHeight;
+
+            const targetWidth = target.offsetWidth;
+            const targetHeight = target.offsetHeight;
+
+            const maxX = gameWidth - targetWidth;
+            const maxY = gameHeight - targetHeight;
+
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY);
+
+            target.style.left = randomX + "px";
+            target.style.top = randomY + "px";
+        }
+
+
+        // Start game
+        function startGame() {
+
+            score = 0;
+            miss = 0;
+            time = 30;
+
+            scoreText.textContent = score;
+            missText.textContent = miss;
+            timeText.textContent = time;
+
+            gameRunning = true;
+
+            target.style.display = "block";
+
+            startBtn.disabled = true;
+
+            message.textContent = "🎯 Target ko click karo!";
+
+            moveTarget();
+
+            timer = setInterval(function() {
+
+                time--;
+
+                timeText.textContent = time;
+
+                if (time <= 0) {
+                    endGame();
+                }
+
+            }, 1000);
+        }
+
+
+        // Target shoot
+        target.addEventListener("click", function(event) {
+
+            if (!gameRunning) {
+                return;
+            }
+
+            event.stopPropagation();
+
+            score++;
+
+scoreText.textContent = score;
+
+            moveTarget();
+        });
+
+
+        // Miss shot
+        game.addEventListener("click", function() {
+
+            if (!gameRunning) {
+                return;
+            }
+
+            miss++;
+
+            missText.textContent = miss;
+        });
+
+
+        // Game over
+        function endGame() {
+
+            gameRunning = false;
+
+            clearInterval(timer);
+
+            target.style.display = "none";
+
+            startBtn.disabled = false;
+
+            message.textContent =
+                "🏆 Game Over! Aapka Score: " + score;
+        }
+
+
+        // Start button
+        startBtn.addEventListener("click", startGame);
+
+    </script>
+
+</body>
+</html>
